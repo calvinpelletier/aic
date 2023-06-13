@@ -2,7 +2,7 @@ import chess
 import numpy as np
 
 from aic.util.rel_action_map import RelActionMap
-from aic.util.board import BOARD_AREA, BOARD_W, square_to_coords, cur_player
+from aic.util.board import BOARD_AREA, BOARD_W, square_to_coords, coords_to_square, cur_player
 
 
 REL_ACTION_MAP = RelActionMap()

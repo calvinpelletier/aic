@@ -13,48 +13,48 @@ EP_RANKS = [2, 5]
 # square state ~
 EMPTY = 0
 EMPTY_EP = 1
-WHITE_PAWN = 2
-WHITE_KNIGHT = 3
-WHITE_BISHOP = 4
-WHITE_ROOK = 5
-WHITE_ROOK_CASTLE = 6
-WHITE_QUEEN = 7
-WHITE_KING = 8
-BLACK_PAWN = 9
-BLACK_KNIGHT = 10
-BLACK_BISHOP = 11
-BLACK_ROOK = 12
-BLACK_ROOK_CASTLE = 13
-BLACK_QUEEN = 14
-BLACK_KING = 15
+MY_PAWN = 2
+MY_KNIGHT = 3
+MY_BISHOP = 4
+MY_ROOK = 5
+MY_ROOK_CASTLE = 6
+MY_QUEEN = 7
+MY_KING = 8
+OP_PAWN = 9
+OP_KNIGHT = 10
+OP_BISHOP = 11
+OP_ROOK = 12
+OP_ROOK_CASTLE = 13
+OP_QUEEN = 14
+OP_KING = 15
 
 N_SQUARE_STATES = 16
 
 PIECE_TO_SQUARE_STATE = {
-    1: WHITE_PAWN,
-    -1: BLACK_PAWN,
+    1: MY_PAWN,
+    -1: OP_PAWN,
 
-    2: WHITE_KNIGHT,
-    -2: BLACK_KNIGHT,
+    2: MY_KNIGHT,
+    -2: OP_KNIGHT,
 
-    3: WHITE_BISHOP,
-    -3: BLACK_BISHOP,
+    3: MY_BISHOP,
+    -3: OP_BISHOP,
 
-    4: WHITE_ROOK,
-    -4: BLACK_ROOK,
+    4: MY_ROOK,
+    -4: OP_ROOK,
 
-    5: WHITE_QUEEN,
-    -5: BLACK_QUEEN,
+    5: MY_QUEEN,
+    -5: OP_QUEEN,
 
-    6: WHITE_KING,
-    -6: BLACK_KING,
+    6: MY_KING,
+    -6: OP_KING,
 }
 
 SQUARE_STATE_TO_PIECE = {v: k for k, v in PIECE_TO_SQUARE_STATE.items()}
 SQUARE_STATE_TO_PIECE[EMPTY] = None
 SQUARE_STATE_TO_PIECE[EMPTY_EP] = None
-SQUARE_STATE_TO_PIECE[WHITE_ROOK_CASTLE] = 4
-SQUARE_STATE_TO_PIECE[BLACK_ROOK_CASTLE] = -4
+SQUARE_STATE_TO_PIECE[MY_ROOK_CASTLE] = 4
+SQUARE_STATE_TO_PIECE[OP_ROOK_CASTLE] = -4
 # ~
 
 
@@ -73,7 +73,7 @@ def pcb_to_board(pcb):
         for castling_rights_fn, x in [(pcb.has_kingside_castling_rights, 7), (pcb.has_queenside_castling_rights, 0)]:
             if castling_rights_fn(color):
                 y = _perspective(0, player) if color else _perspective(7, player)
-                _set_castling_rights(board, x, y, color)
+                _set_castling_rights(board, x, y, color, player)
 
     if pcb.has_legal_en_passant():
         x, y = square_to_coords(pcb.ep_square, player)
@@ -98,13 +98,15 @@ def board_to_pcb(board, player):
                 )
 
     castle_fen = ''
-    if board[_perspective(0, player), 7] == WHITE_ROOK_CASTLE:
+    white_rook_castle = MY_ROOK_CASTLE if player == 1 else OP_ROOK_CASTLE
+    black_rook_castle = MY_ROOK_CASTLE if player == -1 else OP_ROOK_CASTLE
+    if board[_perspective(0, player), 7] == white_rook_castle:
         castle_fen += 'K'
-    if board[_perspective(0, player), 0] == WHITE_ROOK_CASTLE:
+    if board[_perspective(0, player), 0] == white_rook_castle:
         castle_fen += 'Q'
-    if board[_perspective(7, player), 7] == BLACK_ROOK_CASTLE:
+    if board[_perspective(7, player), 7] == black_rook_castle:
         castle_fen += 'k'
-    if board[_perspective(7, player), 0] == BLACK_ROOK_CASTLE:
+    if board[_perspective(7, player), 0] == black_rook_castle:
         castle_fen += 'q'
     pcb.set_castling_fen(castle_fen if castle_fen else '-')
 
@@ -157,14 +159,13 @@ def cur_player(pcb):
     return 1 if pcb.turn else -1
 
 
-def _set_castling_rights(board, x, y, color):
-    if color:
-        print(board[y, x])
-        assert board[y, x] == WHITE_ROOK
-        board[y, x] = WHITE_ROOK_CASTLE
+def _set_castling_rights(board, x, y, color, player):
+    if (color and player == 1) or (not color and player == -1):
+        assert board[y, x] == MY_ROOK
+        board[y, x] = MY_ROOK_CASTLE
     else:
-        assert board[y, x] == BLACK_ROOK
-        board[y, x] = BLACK_ROOK_CASTLE
+        assert board[y, x] == OP_ROOK
+        board[y, x] = OP_ROOK_CASTLE
 
 
 def _perspective(y, player):

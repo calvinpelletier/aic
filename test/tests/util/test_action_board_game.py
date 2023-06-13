@@ -20,7 +20,7 @@ def lichess_games():
 
 
 def test_move_conversion(lichess_games):
-    for game in lichess_games():
+    for game in lichess_games:
         for state in game.mainline():
             if state.parent is None:
                 continue
@@ -28,16 +28,24 @@ def test_move_conversion(lichess_games):
             board = state.parent.board()
             player = 1 if state.parent.turn() else -1
             action = move_to_action(move, player)
-            assert action_to_move(action, board) == move
+            move2 = action_to_move(action, board)
+            assert move == move2
 
 
 def test_board_conversion(lichess_games):
-    for game in lichess_games():
+    for game in lichess_games:
         for state in game.mainline():
             pcb = state.board()
             player = 1 if state.turn() else -1
             board = pcb_to_board(pcb)
-            assert eq_boards(board_to_pcb(board, player), pcb)
+            pcb2 = board_to_pcb(board, player)
+            if not eq_boards(pcb, pcb2):
+                print(board)
+                print(pcb.has_legal_en_passant(), pcb.ep_square)
+                print(pcb2.has_legal_en_passant(), pcb2.ep_square)
+                print(pcb.castling_rights)
+                print(pcb2.castling_rights)
+            assert eq_boards(pcb, pcb2)
 
 
 def test_mirror():
