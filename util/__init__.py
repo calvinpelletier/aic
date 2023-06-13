@@ -17,4 +17,4 @@ from aic.util.board import (
     eq_boards,
     pcb_to_key,
 )
-from aic.util.game import pgn_to_game
+from aic.util.game import pgn_to_game, actions_to_game, eq_games

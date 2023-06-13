@@ -75,3 +75,17 @@ def test_mirror():
         a, b = a.next(), b.next()
         p1, p2 = -p1, -p2
     assert a is None and b is None
+
+
+def test_pgn_iterator():
+    with open(LICHESS_TEST_DATA_PATH / 'lichess_small.pgn', 'r') as f:
+        pgns = [pgn for pgn in pgn_iterator(f)]
+
+    gts = []
+    for i in range(3):
+        with open(LICHESS_TEST_DATA_PATH / f'lichess_small_pgns/{i}.pgn', 'r') as f:
+            gts.append(f.read())
+
+    assert len(pgns) == len(gts)
+    for pgn, gt in zip(pgns, gts):
+        assert pgn.rstrip('\n') == gt.rstrip('\n')
