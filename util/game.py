@@ -22,6 +22,8 @@ def actions_to_game(actions: Iterable[int]) -> Game:
 
 
 def eq_games(a: Game, b: Game) -> bool:
+    '''check if games are equal'''
+    
     a = a.next()
     b = b.next()
     while a is not None and b is not None:
