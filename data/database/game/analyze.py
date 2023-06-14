@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import cu
 
 from aic.const import GAME_DB_PATH
-from aic.data.db.game.database import GameDatabase
+from aic.data.database.game.db import GameDatabase
 
 
 class CLI:

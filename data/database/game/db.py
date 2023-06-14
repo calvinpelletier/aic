@@ -3,8 +3,8 @@ import random
 import numpy as np
 
 from aic.const import GAME_DB_PATH
-from aic.data.db.game.game import CompressedGame
-from aic.data.db.game.meta import LichessMeta
+from aic.data.database.game.game import CompressedGame
+from aic.data.database.game.meta import LichessMeta
 
 
 DB_TYPE_TO_META_CLS = {'lichess': LichessMeta}

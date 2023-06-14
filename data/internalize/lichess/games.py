@@ -3,7 +3,7 @@ from fire import Fire
 
 import cu
 
-from aic.data.db.game import CompressedGame, GameDatabaseWriter, LichessMeta
+from aic.data.database.game import CompressedGame, GameDatabaseWriter, LichessMeta
 from aic.util import move_to_action, pgn_to_game
 from aic.util.lichess import pgn_iterator
 

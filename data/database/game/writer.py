@@ -3,7 +3,7 @@ import numpy as np
 import cu
 
 from aic.const import GAME_DB_PATH
-from aic.data.db.game.game import CompressedGame
+from aic.data.database.game.game import CompressedGame
 
 
 class GameDatabaseWriter:

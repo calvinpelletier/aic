@@ -1,6 +1,6 @@
 from attrs import define
 
-from aic.data.db.game.meta import Meta
+from aic.data.database.game.meta import Meta
 
 
 @define

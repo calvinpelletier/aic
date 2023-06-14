@@ -1,1 +1,1 @@
-from aic.data.db import GameDatabase
+from aic.data.database import GameDatabase
