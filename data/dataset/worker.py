@@ -83,13 +83,13 @@ class _Game:
         s.i = 0
         if cfg.rand_trim_start is not None:
             x, y = cfg.rand_trim_start
-            y = min(y, len(s.actions) - 1)
+            y = min(y, s._end - 1)
             if y > x:
-                for _ in range(random.randrange(x, y)):
+                trim = random.randrange(x, y)
+                for _ in range(trim):
                     done = s.next_position()
                     assert not done
-                print(s.i, y)
-                assert s.i == y
+                assert s.i == trim
 
     def next_position(s):
         s.pcb.push(action_to_move(s.actions[s.i], s.pcb))

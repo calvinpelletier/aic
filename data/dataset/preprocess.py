@@ -22,7 +22,7 @@ def legal(data, game):
 def history(data, game, max_length=127):
     assert game.i <= max_length
     data['history_len'] = np.uint8(game.i)
-    data['history'] = np.zeros(max_length, dtype=np.uint16)
+    data['history'] = np.zeros(max_length, dtype=np.int16)
     if game.i > 0: data['history'][:game.i] = game.actions[:game.i]
 
 

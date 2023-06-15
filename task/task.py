@@ -24,10 +24,20 @@ class BoardMeta2Outcome(Task):
         pp.outcome(data, game)
 
 
-TASK_MAP = {
+class BoardMetaHistory2OutcomeAction(Task):
+    def _preprocess(s, data, game):
+        pp.board(data, game)
+        pp.meta(data, game)
+        pp.history(data, game)
+        pp.outcome(data, game)
+        pp.action(data, game)
+
+
+TASK_NAME_TO_CLS = {
     'b2l': Board2Legal,
     'bm2o': BoardMeta2Outcome,
+    'bmh2oa': BoardMetaHistory2OutcomeAction,
 }
 
 def build_task(cfg):
-    return TASK_MAP[cfg.task]()
+    return TASK_NAME_TO_CLS[cfg.task]()
