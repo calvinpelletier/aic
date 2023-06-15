@@ -34,7 +34,7 @@ class CLI:
         print('n games total:', n_games)
         print('n actions total:', n_actions)
 
-    def elos(s, bins=32):
+    def elos(s, bins=16):
         elos = []
         elo_diffs = []
         for game in s._db.load_chunk(0).game_iter():
@@ -42,6 +42,7 @@ class CLI:
             elo_diffs.append(abs(game.meta.white_elo - game.meta.black_elo))
 
         plt.hist(elos, bins)
+        # plt.hist(elos, [0, 1500, 1750, 2000, 2250, 2500, 3500])
         plt.show()
 
         plt.hist(elo_diffs, bins)
