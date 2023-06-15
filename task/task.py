@@ -17,9 +17,16 @@ class Board2Legal(Task):
         pp.legal(data, game)
 
 
+class BoardMeta2Outcome(Task):
+    def _preprocess(s, data, game):
+        pp.board(data, game)
+        pp.meta(data, game)
+        pp.outcome(data, game)
+
 
 TASK_MAP = {
     'b2l': Board2Legal,
+    'bm2o': BoardMeta2Outcome,
 }
 
 def build_task(cfg):

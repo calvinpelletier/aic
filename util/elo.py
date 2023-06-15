@@ -1,6 +1,4 @@
-
-
-ELO_BINS = [1500, 1750, 2000, 2250, 2500]
+from aic.const import ELO_BINS
 
 
 def elo_to_bin(elo: int):

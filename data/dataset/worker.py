@@ -41,7 +41,7 @@ class TrainDataWorker(torch.utils.data.IterableDataset):
             if not s._should_drop(compressed):
                 break
 
-        return _Game(s._cfg, compressed.meta, compressed.actions)
+        return _Game(s._cfg.data, compressed.meta, compressed.actions)
 
     def _next_chunk(s):
         s._chunk = next(s._chunk_iter)
@@ -88,6 +88,7 @@ class _Game:
                 for _ in range(random.randrange(x, y)):
                     done = s.next_position()
                     assert not done
+                print(s.i, y)
                 assert s.i == y
 
     def next_position(s):

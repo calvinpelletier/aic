@@ -5,7 +5,7 @@ import ai
 from aic.data.dataset.worker import TrainDataWorker
 
 
-def train_data_iter(cfg, batch_size, device='cuda', n_workers=1, train=False):
+def train_data_iter(cfg, device='cuda', n_workers=1):
     return ai.data.DataIterator(
         torch.utils.data.DataLoader(
             TrainDataWorker(cfg),

@@ -54,7 +54,10 @@ class GameDatabase:
         return len(s._chunks)
 
     def chunk_iter(s, shuffle=False) -> Iterator[GameChunk]:
-        idxs = random.shuffle(list(range(s.n_chunks))) if shuffle else range(s.n_chunks)
+        idxs = range(s.n_chunks)
+        if shuffle:
+            idxs = list(idxs)
+            random.shuffle(idxs)
         for i in idxs:
             yield s.load_chunk(i)
 
