@@ -9,9 +9,10 @@ from aic.util import action_to_move, elo_to_bin
 
 
 class TrainDataWorker(torch.utils.data.IterableDataset):
-    def __init__(s, cfg):
+    def __init__(s, cfg, include_ply=False):
         super().__init__()
         s._cfg = cfg
+        s._include_ply = include_ply
         s._db = GameDatabase(cfg.data.db, train=True)
         s._chunk_iter = _inf_chunk_iter(s._db)
         s._preprocessor = build_task(cfg).preprocess
@@ -24,10 +25,15 @@ class TrainDataWorker(torch.utils.data.IterableDataset):
 
     def __next__(s):
         data = s._preprocessor(s._buf[s._j])
+        if s._include_ply:
+            data['ply'] = s._buf[s._j].i
+
         is_done = s._buf[s._j].next_position()
         if is_done:
             s._buf[s._j] = s._next_game()
+
         s._j = (s._j + 1) % len(s._buf)
+
         return data
 
     def _next_game(s):
