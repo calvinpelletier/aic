@@ -1,11 +1,11 @@
 from fire import Fire
 import matplotlib.pyplot as plt
-from time import time
 
 import cu
 
 from aic.const import ELO_BINS, PLY_BINS
 from aic.data.dataset.iterate import train_data_iter
+from aic.data.dataset.util import measure_data_speed
 
 
 class CLI:
@@ -41,14 +41,7 @@ class CLI:
         speeds = []
         for n_workers in range(max_workers):
             print('n workers', n_workers)
-            start = time()
-            for i, batch in enumerate(train_data_iter(s._cfg, s._device, n_workers)):
-                if i >= s._n_batches:
-                    break
-            end = time()
-            seconds_per_batch = (end - start) / n_batches
-            print('seconds per batch', seconds_per_batch)
-            batches_per_second = 1. / seconds_per_batch
+            batches_per_second = measure_data_speed(train_data_iter(s._cfg, s._device, n_workers))
             print('batches per second', batches_per_second)
             speeds.append(batches_per_second)
             print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')

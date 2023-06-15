@@ -11,7 +11,7 @@ def train_data_iter(cfg, device='cuda', n_workers=1, include_ply=False):
             TrainDataWorker(cfg, include_ply),
             batch_size=cfg.train.bs,
             num_workers=n_workers,
-            pin_memory=device.startswith('cuda'),
+            pin_memory=str(device).startswith('cuda'),
         ),
         device=device,
     )

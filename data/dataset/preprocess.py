@@ -8,7 +8,7 @@ def board(data, game):
 
 
 def outcome(data, game):
-    data['outcome'] = game.outcome * (1 if game.i % 2 == 0 else -1)
+    data['outcome'] = np.int8(game.outcome * (1 if game.i % 2 == 0 else -1))
 
 
 def action(data, game):
