@@ -46,5 +46,5 @@ TASK_NAME_TO_CLS = {
     'bmh2oa': BoardMetaHistory2OutcomeAction,
 }
 
-def build_task(cfg):
-    return TASK_NAME_TO_CLS[cfg.task]()
+def build_task(name):
+    return TASK_NAME_TO_CLS[name]()

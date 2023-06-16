@@ -2,22 +2,37 @@ import torch
 import numpy as np
 import random
 import chess
+from typing import Optional
 
 from aic.data.database import GameDatabase
 from aic.task import build_task
 from aic.util import action_to_move, elo_to_bin
 
 
-class TrainDataWorker(torch.utils.data.IterableDataset):
-    def __init__(s, cfg, include_ply=False):
+class DataWorker(torch.utils.data.IterableDataset):
+    def __init__(s,
+        db_name: str,
+        task_name: str,
+        buf_size: int = 1,
+        drop_chance_by_elo_bin: Optional[list[float]] = None,
+        rand_trim_start: Optional[tuple[int, int]] = None,
+        rand_trim_end: Optional[tuple[int, int]] = None,
+        include_ply: bool = False,
+        train: bool = False,
+    ):
         super().__init__()
-        s._cfg = cfg
+        s._drop_chance_by_elo_bin = drop_chance_by_elo_bin
+        s._rand_trim_start = rand_trim_start
+        s._rand_trim_end = rand_trim_end
         s._include_ply = include_ply
-        s._db = GameDatabase(cfg.data.db, train=True)
-        s._chunk_iter = _inf_chunk_iter(s._db)
-        s._preprocessor = build_task(cfg).preprocess
+        s._train = train
+
+        s._chunk_iter = _inf_chunk_iter(GameDatabase(db_name, train), shuffle=train)
+
+        s._preprocessor = build_task(task_name).preprocess
+
         s._next_chunk()
-        s._buf = [s._next_game() for _ in range(cfg.train.bs)]
+        s._buf = [s._next_game() for _ in range(buf_size)]
         s._j = 0
 
     def __iter__(s):
@@ -47,28 +62,28 @@ class TrainDataWorker(torch.utils.data.IterableDataset):
             if not s._should_drop(compressed):
                 break
 
-        return _Game(s._cfg.data, compressed.meta, compressed.actions)
+        return _Game(compressed.meta, compressed.actions, s._rand_trim_start, s._rand_trim_end)
 
     def _next_chunk(s):
         s._chunk = next(s._chunk_iter)
-        s._idxs = np.random.permutation(len(s._chunk))
+        s._idxs = np.random.permutation(len(s._chunk)) if s._train else list(range(len(s._chunk)))
         s._i = 0
 
     def _should_drop(s, game):
-        if s._cfg.data.drop_chance_by_elo_bin is None:
+        if s._drop_chance_by_elo_bin is None:
             return False
 
         bin = elo_to_bin(max(game.meta.white_elo, game.meta.black_elo))
-        return random.random() < s._cfg.data.drop_chance_by_elo_bin[bin]
+        return random.random() < s._drop_chance_by_elo_bin[bin]
 
-def _inf_chunk_iter(db):
+def _inf_chunk_iter(db, shuffle):
     while 1:
-        for chunk in db.chunk_iter(shuffle=True):
+        for chunk in db.chunk_iter(shuffle):
             yield chunk
 
 
 class _Game:
-    def __init__(s, cfg, meta, actions):
+    def __init__(s, meta, actions, rand_trim_start, rand_trim_end):
         s.outcome = meta.outcome
         s.white_elo = meta.white_elo
         s.black_elo = meta.black_elo
@@ -80,15 +95,15 @@ class _Game:
         s.pcb = chess.Board()
 
         s._end = len(s.actions)
-        if cfg.rand_trim_end is not None:
-            x, y = cfg.rand_trim_end
+        if rand_trim_end is not None:
+            x, y = rand_trim_end
             y = min(y, len(s.actions))
             if y > x:
                 s._end = random.randrange(x, y)
 
         s.i = 0
-        if cfg.rand_trim_start is not None:
-            x, y = cfg.rand_trim_start
+        if rand_trim_start is not None:
+            x, y = rand_trim_start
             y = min(y, s._end - 1)
             if y > x:
                 trim = random.randrange(x, y)
