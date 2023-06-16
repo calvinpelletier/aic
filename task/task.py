@@ -11,6 +11,12 @@ class Task:
         raise NotImplementedError()
 
 
+class Board2Action(Task):
+    def _preprocess(s, data, game):
+        pp.board(data, game)
+        pp.action(data, game)
+
+
 class Board2Legal(Task):
     def _preprocess(s, data, game):
         pp.board(data, game)
@@ -34,6 +40,7 @@ class BoardMetaHistory2OutcomeAction(Task):
 
 
 TASK_NAME_TO_CLS = {
+    'b2a': Board2Action,
     'b2l': Board2Legal,
     'bm2o': BoardMeta2Outcome,
     'bmh2oa': BoardMetaHistory2OutcomeAction,
