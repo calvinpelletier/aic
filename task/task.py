@@ -13,30 +13,30 @@ class Task:
 
 class Board2Action(Task):
     def _preprocess(s, data, game):
-        pp.board(data, game)
-        pp.action(data, game)
+        data['board'] = pp.board(game)
+        data['action'] = pp.action(game)
 
 
 class Board2Legal(Task):
     def _preprocess(s, data, game):
-        pp.board(data, game)
-        pp.legal(data, game)
+        data['board'] = pp.board(game)
+        data['legal'] = pp.legal(game)
 
 
 class BoardMeta2Outcome(Task):
     def _preprocess(s, data, game):
-        pp.board(data, game)
-        pp.meta(data, game)
-        pp.outcome(data, game)
+        data['board'] = pp.board(game)
+        data['meta'] = pp.meta(game)
+        data['outcome'] = pp.outcome(game)
 
 
 class BoardMetaHistory2OutcomeAction(Task):
     def _preprocess(s, data, game):
-        pp.board(data, game)
-        pp.meta(data, game)
-        pp.history(data, game)
-        pp.outcome(data, game)
-        pp.action(data, game)
+        data['board'] = pp.board(game)
+        data['meta'] = pp.meta(game)
+        data['history'], data['history_len'] = pp.history(game)
+        data['outcome'] = pp.outcome(game)
+        data['action'] = pp.action(game)
 
 
 TASK_NAME_TO_CLS = {

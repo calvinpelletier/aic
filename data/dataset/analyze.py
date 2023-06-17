@@ -1,9 +1,10 @@
 from fire import Fire
 import matplotlib.pyplot as plt
+import numpy as np
 
 import cu
 
-from aic.const import ELO_BINS, PLY_BINS
+from aic.const import ELO_BINS, PLY_BINS, TASK_DS_PATH, UNDERPROMO_DS_PATH
 from aic.data.dataset.iterate import train_data_iter
 from aic.data.dataset.util import measure_data_speed
 
@@ -60,6 +61,12 @@ class CLI:
         plt.hist(plys_trim, bins, alpha=0.5, label='trim')
         plt.legend(loc='upper right')
         plt.show()
+
+    def task(s):
+        print('n actions', len(np.load(TASK_DS_PATH / 'action.npy')))
+
+    def underpromo(s):
+        print('n actions', len(np.load(UNDERPROMO_DS_PATH / 'action.npy')))
 
     def _get_elos(s):
         elos = []

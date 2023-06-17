@@ -7,13 +7,13 @@ from aic.data.database.game.game import CompressedGame
 
 
 class GameDatabaseWriter:
-    def __init__(s, name: str, chunk_size=100_000, include_times=False):
+    def __init__(s, name: str, chunk_size=100_000):
         path = GAME_DB_PATH / name
         if path.exists(): cu.disk.remove(path)
         s.path = path
 
-        s.train = _GameDatabaseWriter(s.path / 'train', chunk_size, include_times)
-        s.val = _GameDatabaseWriter(s.path / 'val', chunk_size, include_times)
+        s.train = _GameDatabaseWriter(s.path / 'train', chunk_size)
+        s.val = _GameDatabaseWriter(s.path / 'val', chunk_size)
 
     def flush(s):
         s.train.flush()
@@ -21,13 +21,12 @@ class GameDatabaseWriter:
 
 
 class _GameDatabaseWriter:
-    def __init__(s, path, chunk_size, include_times):
+    def __init__(s, path, chunk_size):
         s._path = path
         s._chunk_size = chunk_size
         s._cur_chunk_id = 0
         s._games = []
         s._actions = []
-        s._times = [] if include_times else None
 
     def __del__(s):
         s.flush()
