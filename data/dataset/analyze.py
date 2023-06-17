@@ -9,7 +9,7 @@ from aic.data.dataset.util import measure_data_speed
 
 
 class CLI:
-    def __init__(s, task='bm2o', db='lichess/2023-01', bs=32, device='cuda', n_workers=6, n_batches=10_000):
+    def __init__(s, task='bm2o', db='lichess/2023-01', bs=32, device='cuda', n_batches=10_000):
         s._cfg = cu.Config({
             'task': task,
             'data': {
@@ -22,7 +22,6 @@ class CLI:
             'train': {'bs': bs},
         })
         s._device = device
-        s._n_workers = n_workers
         s._n_batches = n_batches
 
     def elo(s):
@@ -41,7 +40,7 @@ class CLI:
         speeds = []
         for n_workers in range(max_workers):
             print('n workers', n_workers)
-            batches_per_second = measure_data_speed(train_data_iter(s._cfg, s._device, n_workers))
+            batches_per_second = measure_data_speed(train_data_iter(s._cfg, s._device, n_workers=n_workers))
             print('batches per second', batches_per_second)
             speeds.append(batches_per_second)
             print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
@@ -64,7 +63,7 @@ class CLI:
 
     def _get_elos(s):
         elos = []
-        for i, batch in enumerate(train_data_iter(s._cfg, s._device, s._n_workers)):
+        for i, batch in enumerate(train_data_iter(s._cfg, s._device)):
             for j in range(s._cfg.train.bs):
                 elos.append(batch['meta'][j, 0].item())
             if i >= s._n_batches:
@@ -73,7 +72,7 @@ class CLI:
 
     def _get_plys(s):
         plys = []
-        for i, batch in enumerate(train_data_iter(s._cfg, s._device, s._n_workers, include_ply=True)):
+        for i, batch in enumerate(train_data_iter(s._cfg, s._device, include_ply=True)):
             for j in range(s._cfg.train.bs):
                 plys.append(batch['ply'][j].item())
             if i >= s._n_batches:

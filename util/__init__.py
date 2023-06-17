@@ -6,6 +6,7 @@ from aic.util.action import (
     absolute_to_relative_action,
     move_to_coords,
     coords_to_move,
+    is_underpromo,
 )
 from aic.util.board import (
     pcb_to_board,

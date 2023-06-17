@@ -1,7 +1,7 @@
 import pytest
 
 from aic.test import LICHESS_TEST_DATA_PATH
-from aic.util import move_to_action, action_to_move, pcb_to_board, board_to_pcb, eq_boards, pgn_to_game
+from aic.util import move_to_action, action_to_move, pcb_to_board, board_to_pcb, eq_boards, pgn_to_game, is_underpromo
 from aic.util.lichess import pgn_iterator
 
 
@@ -20,7 +20,8 @@ def lichess_games():
 
 
 def test_move_conversion(lichess_games):
-    for game in lichess_games:
+    last_game_has_underpromo = False
+    for i, game in enumerate(lichess_games):
         for state in game.mainline():
             if state.parent is None:
                 continue
@@ -30,6 +31,10 @@ def test_move_conversion(lichess_games):
             action = move_to_action(move, player)
             move2 = action_to_move(action, board)
             assert move == move2
+            # if i == len(lichess_games) - 1 and move.promotion in [2, 3, 4]:
+            if i == len(lichess_games) - 1 and is_underpromo(action):
+                last_game_has_underpromo = True
+    assert last_game_has_underpromo
 
 
 def test_board_conversion(lichess_games):

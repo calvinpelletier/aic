@@ -60,3 +60,10 @@ def legal_mask(board: chess.Board) -> NDArray[np.uint8]:
     for move in board.legal_moves:
         ret[move_to_action(move, player)] = 1
     return ret
+
+def is_underpromo(action: int) -> bool:
+    _, _, rel_action = absolute_to_relative_action(action)
+    _, _, underpromo = REL_ACTION_MAP.from_action(rel_action)
+    ret = underpromo is not None
+    if ret: assert underpromo in [2, 3, 4]
+    return ret 
